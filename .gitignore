@@ -1,0 +1,11 @@
+/node_modules
+/vendor
+/logs
+.env.exemple
+phpunit.xml
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+*.sublime-*

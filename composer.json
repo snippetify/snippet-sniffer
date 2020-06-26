@@ -1,0 +1,50 @@
+{
+    "name": "snippetify/snippet-sniffer",
+    "description": "Crawling and scraping web pages to extract snippets",
+    "type": "library",
+    "homepage": "https://snippetify.com",
+    "keywords": [
+        "bot",
+        "snippet",
+        "library",
+        "scraping",
+        "crawling"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Evens Pierre",
+            "email": "pierrevensy@gmail.com"
+        },
+        {
+            "name": "Snippetify Community",
+            "homepage": "https://github.com/snippetify"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Snippetify\\SnippetSniffer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Snippetify\\SnippetSniffer\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^7.3.0",
+        "fabpot/goutte": "^4.0@dev",
+        "guzzlehttp/psr7": "^2.0@dev",
+        "monolog/monolog": "^2.0@dev"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "scripts": {
+        "test": "phpunit",
+        "post-package-install": [
+            "php -r \"copy('phpunit.xml.dist', 'phpunit.xml');\""
+        ]
+    }
+}
