@@ -93,7 +93,7 @@ $meta = [
 $urlSeeds = GoogleProvider::create($config)->fetch($query, $meta);
 ```
 
-##### Add new providers
+##### Add new providers to package
 
 1. Git clone the project
 2. Create your new class in the ``Snippetify\SnippetSniffer\Providers` folder
@@ -103,6 +103,22 @@ $urlSeeds = GoogleProvider::create($config)->fetch($query, $meta);
 6. Add it in the providers stacks in the `Snippetify\SnippetSniffer\Core.php`
 7. Write tests. Take a look at `Snippetify\SnippetSniffer\Tests\Providers\GoogleProviderTest` to get you helped
 8. Send a pull request to us
+
+##### Use your own providers
+
+1. Your provider must implement `Snippetify\SnippetSniffer\Providers\ProviderInterface` 
+2. Take a look at `Snippetify\SnippetSniffer\Providers\GoogleProvider` to get you helped
+3. Your fetch method must return an array of `GuzzleHttp\Psr7\Uri`
+4. Pass your new provider in the configuration parameter as follow
+
+```php
+// Configurations
+$config = [
+  "providers" => [
+    "provider_name" => "ProviderClass::class"
+  ]
+];
+```
 
 #### Scrapers
 
@@ -136,7 +152,7 @@ $urlSeed = "website url to scrape";
 $snippets = (new DefaultScraper($config))->fetch(new Uri($urlSeed));
 ```
 
-##### Add new scrapers
+##### Add new scrapers to package
 
 1. Git clone the project
 2. Create your new class in the ``Snippetify\SnippetSniffer\Scrapers` folder
@@ -146,6 +162,23 @@ $snippets = (new DefaultScraper($config))->fetch(new Uri($urlSeed));
 6. Add it in the scrapers stacks in the `Snippetify\SnippetSniffer\Core.php`
 7. Write tests. Take a look at `Snippetify\SnippetSniffer\Tests\Scrapers\StackoverflowScraperTest` to get you helped
 8. Send a pull request to us
+
+##### Use your own scrapers
+
+1. Your scraper must implement `Snippetify\SnippetSniffer\Scrapers\ScraperInterface` 
+2. Take a look at `Snippetify\SnippetSniffer\Scrapers\StackoverflowScraper` to get you helped
+3. Your fetch method must return an array of `Snippetify\SnippetSniffer\Common\Snippet`
+4. Pass your new scraper in the configuration parameter as follow
+
+```php
+// Configurations
+// Important: Scrapper's name must be the website uri without the scheme. i.e. vuejs.org
+$config = [
+  "scrapers" => [
+    "scraper_name" => "ScraperClass::class"
+  ]
+];
+```
 
 ## Changelog
 

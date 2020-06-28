@@ -69,6 +69,86 @@ class SnippetSnifferTest extends TestCase
         }
     }
 
+    public function testCustomProviderClassNotExists()
+    {
+        try {
+            $config = [
+                'provider' => [
+                    'cx' => $_SERVER['PROVIDER_CX'],
+                    'key' => $_SERVER['PROVIDER_KEY'],
+                    'name' => $_SERVER['PROVIDER_NAME'],
+                ],
+                'providers' => [
+                    'gigbyte' => 'lormemdm'
+                ]
+            ];
+            $sniffer = new SnippetSniffer($config);
+            $sniffer->fetch('js array contains', [ 'page' => 1, 'limit' => 10 ]);
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(\RuntimeException::class, $e);
+        }
+    }
+
+    public function testCustomProviderClassNotImpementsProviderInterface()
+    {
+        try {
+            $config = [
+                'provider' => [
+                    'cx' => $_SERVER['PROVIDER_CX'],
+                    'key' => $_SERVER['PROVIDER_KEY'],
+                    'name' => 'gigbyte',
+                ],
+                'providers' => [
+                    'gigbyte' => SnippetSniffer::class
+                ]
+            ];
+            $sniffer = new SnippetSniffer($config);
+            $sniffer->fetch('js array contains', [ 'page' => 1, 'limit' => 10 ]);
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(\RuntimeException::class, $e);
+        }
+    }
+
+    public function testCustomScraperClassNotExists()
+    {
+        try {
+            $config = [
+                'provider' => [
+                    'cx' => $_SERVER['PROVIDER_CX'],
+                    'key' => $_SERVER['PROVIDER_KEY'],
+                    'name' => $_SERVER['PROVIDER_NAME'],
+                ],
+                'scrapers' => [
+                    'gigbyte' => 'lormemdm'
+                ]
+            ];
+            $sniffer = new SnippetSniffer($config);
+            $sniffer->fetch('js array contains', [ 'page' => 1, 'limit' => 10 ]);
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(\RuntimeException::class, $e);
+        }
+    }
+
+    public function testCustomScraperClassNotImpementsScraperInterface()
+    {
+        try {
+            $config = [
+                'provider' => [
+                    'cx' => $_SERVER['PROVIDER_CX'],
+                    'key' => $_SERVER['PROVIDER_KEY'],
+                    'name' => $_SERVER['PROVIDER_NAME'],
+                ],
+                'scrapers' => [
+                    'default' => SnippetSniffer::class
+                ]
+            ];
+            $sniffer = new SnippetSniffer($config);
+            $sniffer->fetch('js array contains', [ 'page' => 1, 'limit' => 10 ]);
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(\RuntimeException::class, $e);
+        }
+    }
+
     public function testContainsResults()
     {
         $data = $this->sniffer->fetch('js array contains', [ 'page' => 1, 'limit' => 10 ]);

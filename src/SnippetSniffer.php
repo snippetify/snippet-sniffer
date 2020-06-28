@@ -64,7 +64,7 @@ class SnippetSniffer
         foreach ($urls as $url) {
             $snippets = array_merge($snippets, $this->scraper($url->getHost())->fetch($url));
         }
-
+        
         return $snippets;
     }
 
@@ -75,11 +75,28 @@ class SnippetSniffer
      */
     protected function provider(): ProviderInterface
     {
-        if (!array_key_exists($this->config['provider']['name'], Core::$providers)) {
+        $providers = Core::$providers;
+
+        if (!empty($this->config['providers'])) {
+            foreach ($this->config['providers'] as $key => $value) {
+                if (!class_exists($value)) {
+                    throw new \RuntimeException("Provider class not exists");
+                }
+                $providers[$key] = $value;
+            }
+        }
+
+        if (!array_key_exists($this->config['provider']['name'], $providers)) {
             throw new \RuntimeException("Provider not exists");
         }
 
-        return Core::$providers[$this->config['provider']['name']]::create($this->config['provider']);
+        $provider = $providers[$this->config['provider']['name']]::create($this->config['provider']);
+
+        if (!$provider instanceof ProviderInterface) {
+            throw new \RuntimeException("Provider class must implement the ProviderInterface");
+        }
+
+        return $provider;
     }
 
     /**
@@ -89,8 +106,25 @@ class SnippetSniffer
      */
     protected function scraper(string $name): ScraperInterface
     {
-        $name = array_key_exists($name, Core::$scrapers) ? $name : 'default';
+        $scrapers = Core::$scrapers;
 
-        return new Core::$scrapers[$name]($this->config);
+        if (!empty($this->config['scrapers'])) {
+            foreach ($this->config['scrapers'] as $key => $value) {
+                if (!class_exists($value)) {
+                    throw new \RuntimeException("Scraper class not exists");
+                }
+                $scrapers[$key] = $value;
+            }
+        }
+
+        $name = array_key_exists($name, $scrapers) ? $name : 'default';
+
+        $scraper = new $scrapers[$name]($this->config);
+
+        if (!$scraper instanceof ScraperInterface) {
+            throw new \RuntimeException("Scraper class must implement the ScraperInterface");
+        }
+
+        return $scraper;
     }
 }
