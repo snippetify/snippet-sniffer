@@ -29,14 +29,4 @@ class Core
         'default' => \Snippetify\SnippetSniffer\Scrapers\DefaultScraper::class,
         'stackoverflow.com' => \Snippetify\SnippetSniffer\Scrapers\StackoverflowScraper::class,
     ];
-
-    /**
-     * Languages.
-     *
-     * @var array
-     */
-    public static function getLanguages(): array
-    {
-    	return require dirname(__FILE__).'/../data/languages.php'; 
-    }
 }

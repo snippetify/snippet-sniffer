@@ -59,7 +59,7 @@ class GoogleProvider implements ProviderInterface
      *
      * @param  string  $query
      * @param  array  $meta
-     * @return  Uri[]
+     * @return Psr\Http\Message\UriInterface[]
      */
     public function fetch(string $query, array $meta = []): array
     {

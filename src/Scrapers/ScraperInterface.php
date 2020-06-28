@@ -2,9 +2,9 @@
 
 namespace Snippetify\SnippetSniffer\Scrapers;
 
-use GuzzleHttp\Psr7\Uri;
+use Psr\Http\Message\UriInterface;
 
 interface ScraperInterface
 {
-    public function fetch(Uri $uri, array $options = []): array;
+    public function fetch(UriInterface $uri, array $options = []): array;
 }

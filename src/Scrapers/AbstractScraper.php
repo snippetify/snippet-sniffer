@@ -4,9 +4,11 @@ namespace Snippetify\SnippetSniffer\Scrapers;
 
 use Goutte\Client;
 use GuzzleHttp\Psr7\Uri;
+use Psr\Http\Message\UriInterface;
 use Snippetify\SnippetSniffer\Core;
-use Snippetify\SnippetSniffer\Common\Snippet;
 use Symfony\Component\DomCrawler\Crawler;
+use Snippetify\SnippetSniffer\Common\Snippet;
+use Snippetify\ProgrammingLanguages\Facades\Languages;
 
 abstract class AbstractScraper implements ScraperInterface
 {
@@ -46,10 +48,10 @@ abstract class AbstractScraper implements ScraperInterface
     /**
      * Get crawler.
      *
-     * @param  Psr\Http\Message\UriInterface\Uri  $uri
+     * @param  Psr\Http\Message\UriInterface  $uri
      * @return  Symfony\Component\DomCrawler\Crawler
      */
-    protected function getCrawler(Uri $uri): Crawler
+    protected function getCrawler(UriInterface $uri): Crawler
     {
         return (new Client)->request('GET', $uri, ['headers' => ['User-Agent' => Core::USER_AGENT]]);
     }
@@ -78,10 +80,11 @@ abstract class AbstractScraper implements ScraperInterface
      * Hydrate snippets.
      *
      * @param  Crawler  $node
-     * @param  Uri  $uri
+     * @param  Crawler  $crawler
+     * @param  UriInterface  $uri
      * @return  Snippet[]
      */
-    protected function hydrateSnippets(Crawler $node, Crawler $crawler, Uri $uri): void
+    protected function hydrateSnippets(Crawler $node, Crawler $crawler, UriInterface $uri): void
     {
     	if ($node->count() === 0 || // When there is no snippets
             count($tags = $this->fetchTags($node)) === 0 || // When there is no tags
@@ -116,10 +119,9 @@ abstract class AbstractScraper implements ScraperInterface
         $nodeClasses 	= $node->attr('class');
         $parentClasses 	= implode(" ", $node->parents()->each(function ($v) { return $v->attr('class'); }));
         $classes 		= preg_split("/\s|\-/", strtolower(trim("$nodeClasses $parentClasses")));
-        $languages 		= array_map(function ($v) { return strtolower(trim($v)); }, Core::getLanguages());
 
         foreach ($classes as $class) {
-        	if (in_array($class, $languages)) $tags[] = ucfirst($class);
+        	if (Languages::exists($class)) $tags[] = ucfirst($class);
         }
 
         return array_unique($tags);

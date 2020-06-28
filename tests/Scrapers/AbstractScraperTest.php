@@ -13,8 +13,8 @@ namespace Snippetify\SnippetSniffer\Tests\Scrapers;
 
 use GuzzleHttp\Psr7\Uri;
 use PHPUnit\Framework\TestCase;
-use Snippetify\SnippetSniffer\Core;
 use Snippetify\SnippetSniffer\Scrapers\DefaultScraper;
+use Snippetify\ProgrammingLanguages\Facades\Languages;
 use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpClient\Exception\InvalidArgumentException;
 
@@ -110,12 +110,11 @@ abstract class AbstractScraperTest extends TestCase
     public function testResultsContainLanguage()
     {
     	$has = true;
-    	$languages = array_map(function ($v) { return strtolower(trim($v)); }, Core::getLanguages());
     	
-    	foreach ($this->snippets as $snippet) {
+        foreach ($this->snippets as $snippet) {
             $hasLang = false;
     		foreach ($snippet->tags as $tag) {
-	        	if (in_array(strtolower($tag), $languages)) {
+	        	if (Languages::exists($tag)) {
                     $hasLang = true;
                     break;
                 }

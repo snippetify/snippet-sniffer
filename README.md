@@ -96,7 +96,7 @@ $urlSeeds = GoogleProvider::create($config)->fetch($query, $meta);
 ##### Add new providers to package
 
 1. Git clone the project
-2. Create your new class in the ``Snippetify\SnippetSniffer\Providers` folder
+2. Create your new class in the `Snippetify\SnippetSniffer\Providers` folder
 3. Each provider implements `Snippetify\SnippetSniffer\Providers\ProviderInterface` 
 4. Take a look at `Snippetify\SnippetSniffer\Providers\GoogleProvider` to get you helped
 5. Your fetch method must return an array of `GuzzleHttp\Psr7\Uri`
@@ -155,7 +155,7 @@ $snippets = (new DefaultScraper($config))->fetch(new Uri($urlSeed));
 ##### Add new scrapers to package
 
 1. Git clone the project
-2. Create your new class in the ``Snippetify\SnippetSniffer\Scrapers` folder
+2. Create your new class in the `Snippetify\SnippetSniffer\Scrapers` folder
 3. Each scraper implements `Snippetify\SnippetSniffer\Scrapers\ScraperInterface` 
 4. Take a look at `Snippetify\SnippetSniffer\Scrapers\StackoverflowScraper` to get you helped
 5. Your fetch method must return an array of `Snippetify\SnippetSniffer\Common\Snippet`

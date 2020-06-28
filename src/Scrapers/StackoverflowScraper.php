@@ -4,9 +4,9 @@ namespace Snippetify\SnippetSniffer\Scrapers;
 
 use Goutte\Client;
 use GuzzleHttp\Psr7\Uri;
-use Snippetify\SnippetSniffer\Core;
-use Snippetify\SnippetSniffer\Common\Logger;
+use Psr\Http\Message\UriInterface;
 use Symfony\Component\DomCrawler\Crawler;
+use Snippetify\SnippetSniffer\Common\Logger;
 use Snippetify\SnippetSniffer\Common\Snippet;
 
 final class StackoverflowScraper extends AbstractScraper
@@ -14,11 +14,11 @@ final class StackoverflowScraper extends AbstractScraper
     /**
      * Fetch snippets.
      *
-     * @param  string  $query
-     * @param  array  $meta
+     * @param  UriInterface  $uri
+     * @param  array  $options
      * @return  Snippet[]
      */
-    public function fetch(Uri $uri, array $options = []): array
+    public function fetch(UriInterface $uri, array $options = []): array
     {
         $crawler = $this->getCrawler($uri);
 
