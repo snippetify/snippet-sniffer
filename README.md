@@ -109,15 +109,24 @@ $urlSeeds = GoogleProvider::create($config)->fetch($query, $meta);
 1. Your provider must implement `Snippetify\SnippetSniffer\Providers\ProviderInterface` 
 2. Take a look at `Snippetify\SnippetSniffer\Providers\GoogleProvider` to get you helped
 3. Your fetch method must return an array of `GuzzleHttp\Psr7\Uri`
-4. Pass your new provider in the configuration parameter as follow
+4. Pass your new provider in the configuration parameter or use the `addProvider` method
 
 ```php
-// Configurations
+use Snippetify\SnippetSniffer\SnippetSniffer;
+
+// Use Configurations
 $config = [
   "providers" => [
-    "provider_name" => "ProviderClass::class"
+    "provider_name" => "ProviderClass::class",
+    "provider_2_name" => "Provider2Class::class" // You can add as many as you want
   ]
 ];
+
+// Or use addProvider method as follow
+SnippetSniffer::create(...)
+  ->addProvider('provider_name', 'ProviderClass::class')
+  ->addProvider('provider_2_name', 'Provider2Class::class') // You can add as many as you want
+  ...
 ```
 
 #### Scrapers
@@ -168,16 +177,26 @@ $snippets = (new DefaultScraper($config))->fetch(new Uri($urlSeed));
 1. Your scraper must implement `Snippetify\SnippetSniffer\Scrapers\ScraperInterface` 
 2. Take a look at `Snippetify\SnippetSniffer\Scrapers\StackoverflowScraper` to get you helped
 3. Your fetch method must return an array of `Snippetify\SnippetSniffer\Common\Snippet`
-4. Pass your new scraper in the configuration parameter as follow
+4. Pass your new scraper in the configuration parameter or use the `addScraper` method
 
 ```php
-// Configurations
+use Snippetify\SnippetSniffer\SnippetSniffer;
+
 // Important: Scrapper's name must be the website uri without the scheme. i.e. vuejs.org
+
+// Configurations
 $config = [
   "scrapers" => [
-    "scraper_name" => "ScraperClass::class"
+    "scraper_name" => "ScraperClass::class",
+    "scraper_2_name" => "Scraper2Class::class" // You can add as many as you want
   ]
 ];
+
+// Or use addProvider method as follow
+SnippetSniffer::create(...)
+  ->addScraper('scraper_name', 'ScraperClass::class')
+  ->addScraper('scraper_2_name', 'Scraper2Class::class') // You can add as many as you want
+  ...
 ```
 
 ## Changelog

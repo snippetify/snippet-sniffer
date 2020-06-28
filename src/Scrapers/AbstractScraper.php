@@ -7,6 +7,7 @@ use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\UriInterface;
 use Snippetify\SnippetSniffer\Core;
 use Symfony\Component\DomCrawler\Crawler;
+use Snippetify\SnippetSniffer\Common\Logger;
 use Snippetify\SnippetSniffer\Common\Snippet;
 use Snippetify\ProgrammingLanguages\Facades\Languages;
 
@@ -18,6 +19,13 @@ abstract class AbstractScraper implements ScraperInterface
      * @var string
      */
     protected $config;
+
+    /**
+     * Logger.
+     *
+     * @var Snippetify\SnippetSniffer\Common\Logger
+     */
+    protected $logger;
 
     /**
      * Snippets.
@@ -39,10 +47,13 @@ abstract class AbstractScraper implements ScraperInterface
         if (empty($this->config['logger'])) $this->config['logger'] = [];
 
         if (empty($config['app'])) {
-            $this->config['app']['name'] = Core::APP_NAME;
-            $this->config['app']['type'] = Core::APP_TYPE;
-            $this->config['app']['version'] = Core::APP_VERSION;
+            $this->config['app']['name']        = Core::APP_NAME;
+            $this->config['app']['type']        = Core::APP_TYPE;
+            $this->config['app']['version']     = Core::APP_VERSION;
+            $this->config['app']['user_agent']  = Core::USER_AGENT;
         }
+
+        $this->logger = Logger::create($this->config['logger']);
     }
 
     /**
@@ -53,7 +64,7 @@ abstract class AbstractScraper implements ScraperInterface
      */
     protected function getCrawler(UriInterface $uri): Crawler
     {
-        return (new Client)->request('GET', $uri, ['headers' => ['User-Agent' => Core::USER_AGENT]]);
+        return (new Client)->request('GET', $uri, ['headers' => ['User-Agent' => $this->config['app']['user_agent']]]);
     }
 
     /**
@@ -164,5 +175,16 @@ abstract class AbstractScraper implements ScraperInterface
             'brand' => $brand,
             'url'   => (new Uri($node->getUri()))->getHost(),
         ];
+    }
+
+    /**
+     * Log error.
+     *
+     * @param  string  $message
+     * @return  void
+     */
+    protected function logError(string $message): void
+    {
+        $this->logger->log($message, Logger::ERROR);
     }
 }

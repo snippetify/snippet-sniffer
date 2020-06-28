@@ -149,9 +149,57 @@ class SnippetSnifferTest extends TestCase
         }
     }
 
+    public function testAddScraperArgumentsCannotBeEmpty()
+    {
+        try {
+            $config = [
+                'provider' => [
+                    'name' => 'foo',
+                ]
+            ];
+            $sniffer = new SnippetSniffer($config);
+            $sniffer->addScraper('', '');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(\InvalidArgumentException::class, $e);
+        }
+    }
+
+    public function testAddProviderArgumentsCannotBeEmpty()
+    {
+        try {
+            $config = [
+                'provider' => [
+                    'name' => 'foo',
+                ]
+            ];
+            $sniffer = new SnippetSniffer($config);
+            $sniffer->addProvider('', '');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(\InvalidArgumentException::class, $e);
+        }
+    }
+
     public function testContainsResults()
     {
         $data = $this->sniffer->fetch('js array contains', [ 'page' => 1, 'limit' => 10 ]);
+
+        $this->assertGreaterThan(0, count($data));
+    }
+
+    public function testAddScraper()
+    {
+        $data = $this->sniffer
+            ->addScraper('stackoverflow.com', \Snippetify\SnippetSniffer\Scrapers\StackoverflowScraper::class)
+            ->fetch('js array contains', [ 'page' => 1, 'limit' => 10 ]);
+
+        $this->assertGreaterThan(0, count($data));
+    }
+
+    public function testAddProvider()
+    {
+        $data = $this->sniffer
+            ->addProvider('google', \Snippetify\SnippetSniffer\Providers\GoogleProvider::class)
+            ->fetch('js array contains', [ 'page' => 1, 'limit' => 10 ]);
 
         $this->assertGreaterThan(0, count($data));
     }

@@ -51,7 +51,7 @@ final class Logger
         $this->config = $config;
         
         if (empty($config['name'])) $this->config['name'] = self::NAME;
-        if (empty($config['file'])) $this->config['file'] = dirname(__FILE__).'/../../logs/'.self::LOG_FILE;
+        if (empty($config['file'])) $this->config['file'] = dirname(__FILE__) . '/../../logs/'.self::LOG_FILE;
 
         $this->logger = new BaseLogger($this->config['name']);
     }

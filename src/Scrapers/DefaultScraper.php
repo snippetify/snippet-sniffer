@@ -3,7 +3,6 @@
 namespace Snippetify\SnippetSniffer\Scrapers;
 
 use Psr\Http\Message\UriInterface;
-use Snippetify\SnippetSniffer\Common\Logger;
 
 final class DefaultScraper extends AbstractScraper
 {
@@ -35,7 +34,7 @@ final class DefaultScraper extends AbstractScraper
                 $this->hydrateSnippets($node, $crawler, $uri);
             });
         } catch (\Exception $e) {
-            Logger::create($this->config['logger'])->log($e, Logger::ERROR);
+            $this->logError($e);
         }
 
         return $this->snippets;

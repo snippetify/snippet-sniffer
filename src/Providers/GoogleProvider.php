@@ -7,7 +7,7 @@ use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpClient\Exception\InvalidArgumentException;
 
-class GoogleProvider implements ProviderInterface
+final class GoogleProvider implements ProviderInterface
 {
     const API_URI = 'https://www.googleapis.com/customsearch/v1';
 
@@ -16,7 +16,7 @@ class GoogleProvider implements ProviderInterface
      *
      * @var string
      */
-    protected $config;
+    private $config;
 
     /**
      * Singletion.
@@ -85,7 +85,7 @@ class GoogleProvider implements ProviderInterface
             'start' => empty($meta['page']) || empty($meta['limit']) ? 1 : 
                 (($meta['page'] * $meta['limit']) - $meta['limit']) + 1
         ]);
-        $response   = HttpClient::create()->request('GET', self::API_URI."?$query");
+        $response   = HttpClient::create()->request('GET', self::API_URI . "?{$query}");
 
         if (200 !== $response->getStatusCode()) {
             throw new ClientException($response);

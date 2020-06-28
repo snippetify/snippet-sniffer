@@ -6,7 +6,6 @@ use Goutte\Client;
 use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\DomCrawler\Crawler;
-use Snippetify\SnippetSniffer\Common\Logger;
 use Snippetify\SnippetSniffer\Common\Snippet;
 
 final class StackoverflowScraper extends AbstractScraper
@@ -60,7 +59,7 @@ final class StackoverflowScraper extends AbstractScraper
                 
             });
         } catch (\Exception $e) {
-            Logger::create($this->config['logger'])->log($e, Logger::ERROR);
+            $this->logError($e);
         }
         
         return $this->snippets;

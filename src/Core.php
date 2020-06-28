@@ -17,7 +17,7 @@ class Core
      */
     public static $providers = [
         'google' => \Snippetify\SnippetSniffer\Providers\GoogleProvider::class,
-        'gigablast' => \Snippetify\SnippetSniffer\Providers\GigablastProvider::class,
+        // 'gigablast' => \Snippetify\SnippetSniffer\Providers\GigablastProvider::class,
     ];
 
     /**
