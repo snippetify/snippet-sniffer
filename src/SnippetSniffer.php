@@ -134,7 +134,7 @@ final class SnippetSniffer
      *
      * @return  ProviderInterface
      */
-    protected function provider(): ProviderInterface
+    private function provider(): ProviderInterface
     {
         if (empty($this->providers)) {
             throw new \RuntimeException("Providers cannot be empty.");
@@ -164,7 +164,7 @@ final class SnippetSniffer
      *
      * @return  ScraperInterface
      */
-    protected function scraper(string $name): ScraperInterface
+    private function scraper(string $name): ScraperInterface
     {
         if (empty($this->scrapers)) {
             throw new \RuntimeException("Scrapers cannot be empty.");
