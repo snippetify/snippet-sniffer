@@ -15,6 +15,8 @@ This library allows you
 $ composer require snippetify/snippet-sniffer
 ```
 
+### Snippet Sniffer
+
 ```php
 use Snippetify\SnippetSniffer\SnippetSniffer;
 
@@ -199,13 +201,93 @@ SnippetSniffer::create(...)
   ...
 ```
 
+### Sniptbot
+
+Sniptbot allows you to extract all snippets from a website by crawling it.
+
+```php
+use Snippetify\SnippetSniffer\WebCrawler;
+
+// Optional
+$config = [...];
+
+// @return Snippetify\SnippetSniffer\Common\MetaSnippetCollection[]
+$snippets = WebCrawler::create($config)->fetch(['your uri']);
+```
+
+
+
+#### Configuration reference
+
+```php
+$config = [
+  // Required 
+  // Search engine api configuration keys
+  'provider' => [
+    "cx" => "your google Search engine ID",
+    "key" => "your google API key"
+    'name' => 'provider name (google)',
+  ],
+  // Optional
+  // Useful for adding meta information to each snippet
+  'app' => [
+    "name" => "your App name",
+    'version' => 'your App version',
+  ],
+  // Optional
+  // Useful for logging
+  'logger' => [
+    "name" => "logger name",
+    'file' => 'logger file path',
+  ],
+  // Optional
+  // Useful for scraping
+  "html_tags" => [
+    "snippet" => "pre[class] code, div[class] code, .highlight pre, code[class]", // Tags to fetch snippets
+    "index" => "h1, h2, h3, h4, h5, h6, p, li" // Tags to index
+  ],
+  // Optional
+  // Useful for adding new scrapers
+  // The name must be the website host without the scheme i.e. not https://foo.com but foo.com
+  "scrapers" => [
+    "scraper_name" => ScraperClass::class,
+    "scraper_2_name" => Scraper2Class::class // You can add as many as you want
+  ],
+  // Optional
+  // Useful for adding new providers
+  "providers" => [
+    "provider_name" => ProviderClass::class,
+    "provider_2_name" => Provider2Class::class // You can add as many as you want
+  ],
+  // Optional
+  // Useful for web crawling
+  // Please follow the link below for more information as we use Spatie crawler
+  // https://github.com/spatie/crawler
+  "crawler" => [
+    "langs" => ['en'],
+    "profile" => CrawlSubdomainsAndUniqueUri::class,
+    "user_agent" => 'your user agent',
+    "concurrency" => 10,
+    "ignore_robots" => false,
+    "maximum_depth" => null,
+    "execute_javascript" => false,
+    "maximum_crawl_count" => null,
+    "parseable_mime_types" => 'text/html',
+    "maximum_response_size" => 1024 * 1024 * 3,
+    "delay_between_requests" => 250,
+  ]
+];
+```
+
 ## Changelog
 
 Please see [CHANGELOG](https://github.com/snippetify/snippet-sniffer/blob/master/CHANGELOG.md) for more information what has changed recently.
 
 ## Testing
 
- You must set the **PROVIDER_NAME**, **PROVIDER_CX**, **PROVIDER_KEY** keys in phpunit.xml file before running tests.
+ You must set the **PROVIDER_NAME**, **PROVIDER_CX**, **PROVIDER_KEY**, **CRAWLER_URI**, **DEFAULT_SCRAPER_URI**, **STACKOVERFLOW_SCRAPER_URI** keys in phpunit.xml file before running tests.
+
+**Important:** Those links must contains at least one snippet otherwise the tests will failed. The **Stackoverflow** uri must be a question link with an accepted answer otherwise the tests will failed.
 
 ```bash
 composer test

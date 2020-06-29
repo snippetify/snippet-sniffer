@@ -13,75 +13,59 @@ namespace Snippetify\SnippetSniffer\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Snippetify\SnippetSniffer\WebCrawler;
-use Symfony\Component\HttpClient\Exception\InvalidArgumentException;
 
-class WebCrawlerTest extends TestCase
+final class WebCrawlerTest extends TestCase
 {
     /**
      * @var Snippetify\SnippetSniffer\WebCrawler
      */
-    protected $webCrawler;
+    private $webCrawler;
+
+    /**
+     * @var Snippetify\SnippetSniffer\Common\MetaSnippetCollection[]
+     */
+    private $snippets = [];
 
 
     protected function setUp(): void
     {
         $this->webCrawler = WebCrawler::create();
+        $this->snippets   = $this->webCrawler->fetch([$_SERVER['CRAWLER_URI']]);
     }
 
-
-    public function testCustomScraperClassNotExists()
-    {
-        try {
-            $config = [
-                'scrapers' => [
-                    'gigbyte' => 'lormemdm'
-                ]
-            ];
-            $webCrawler = new WebCrawler($config);
-            $webCrawler->fetch(['http://localhost:3000']);
-        } catch (\Exception $e) {
-            $this->assertInstanceOf(\RuntimeException::class, $e);
-        }
-    }
-
-    public function testCustomScraperClassNotImpementsScraperInterface()
-    {
-        try {
-            $config = [
-                'scrapers' => [
-                    'default' => WebCrawler::class
-                ]
-            ];
-            $webCrawler = new WebCrawler($config);
-            $webCrawler->fetch(['http://localhost:3000']);
-        } catch (\Exception $e) {
-            $this->assertInstanceOf(\RuntimeException::class, $e);
-        }
-    }
-
-    public function testAddScraperArgumentsCannotBeEmpty()
-    {
-        try {
-            $webCrawler = new WebCrawler();
-            $webCrawler->addScraper('', '');
-        } catch (\Exception $e) {
-            $this->assertInstanceOf(\InvalidArgumentException::class, $e);
-        }
-    }
 
     public function testContainsResults()
     {
-        $data = $this->webCrawler->fetch(['http://localhost:3000']);
-
-        $this->assertGreaterThan(0, count($data));
+        $this->assertGreaterThan(0, count($this->snippets));
     }
 
-    public function testAddScraper()
+    public function testContainsUniqueResults()
     {
-        $data = $this->webCrawler
-            ->addScraper('stackoverflow.com', \Snippetify\SnippetSniffer\Scrapers\StackoverflowScraper::class)
-            ->fetch(['http://localhost:3000']);
+        $has = true;
+        
+        foreach ($this->snippets as $i => $snippet1) {
+            foreach ($this->snippets as $j => $snippet2) {
+                if ($i !== $j && (string) $snippet1->uri === (string) $snippet2->uri) {
+                    $has = false;
+                    break;
+                }
+            }
+        }
 
-        $this->assertGreaterThan(0, count($data));
+        $this->assertTrue($has);
+    }
+
+    public function testContainsSnippets()
+    {
+        $has = true;
+
+        foreach ($this->snippets as $snippet) {
+            if (0 === count($snippet->snippets)) {
+                $has = false;
+                break;
+            }
+        }
+
+        $this->assertTrue($has);
     }
 }

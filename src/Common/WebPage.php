@@ -19,22 +19,17 @@ class WebPage
     /**
      * @var string
      */
-    public $siteName;
-
-    /**
-     * @var Psr\Http\Message\UriInterface
-     */
-    public $siteUri;
-
-    /**
-     * @var string
-     */
     public $title;
 
     /**
      * @var string
      */
     public $summary;
+    
+    /**
+     * @var string
+     */
+    public $lang;
 
     /**
      * @var Psr\Http\Message\UriInterface

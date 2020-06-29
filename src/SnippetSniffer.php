@@ -39,6 +39,7 @@ final class SnippetSniffer
     /**
      * @param  array  $config
      * @return void
+     * @throws InvalidArgumentException
      */
     public function __construct(array $config)
     {
@@ -78,6 +79,7 @@ final class SnippetSniffer
      * @param  string  $name
      * @param  string  $class
      * @return self
+     * @throws InvalidArgumentException
      */
     public function addScraper(string $name, string $class): self
     {
@@ -96,6 +98,7 @@ final class SnippetSniffer
      * @param  string  $name
      * @param  string  $class
      * @return self
+     * @throws InvalidArgumentException
      */
     public function addProvider(string $name, string $class): self
     {
@@ -123,14 +126,15 @@ final class SnippetSniffer
         foreach ($urls as $url) {
             $snippets = array_merge($snippets, $this->scraper($url->getHost())->fetch($url));
         }
-        \Snippetify\SnippetSniffer\Common\Logger::create()->log(json_encode($snippets));
+
         return $snippets;
     }
 
     /**
      * Get provider.
      *
-     * @return  Snippetify\SnippetSniffer\Providers\ProviderInterface
+     * @return Snippetify\SnippetSniffer\Providers\ProviderInterface
+     * @throws RuntimeException
      */
     private function provider(): ProviderInterface
     {
@@ -160,7 +164,9 @@ final class SnippetSniffer
     /**
      * Get scraper.
      *
-     * @return  Snippetify\SnippetSniffer\Scrapers\ScraperInterface
+     * @param  string  $name
+     * @return Snippetify\SnippetSniffer\Scrapers\ScraperInterface
+     * @throws RuntimeException
      */
     private function scraper(string $name): ScraperInterface
     {

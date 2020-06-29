@@ -18,13 +18,13 @@ class StackoverflowScraperTest extends AbstractScraperTest
 {
     protected function setUp(): void
     {
-        $this->snippets = (new StackoverflowScraper)->fetch(new Uri('https://stackoverflow.com/questions/218384/what-is-a-nullpointerexception-and-how-do-i-fix-it'));
+        $this->snippets = (new StackoverflowScraper)->fetch(new Uri($_SERVER['STACKOVERFLOW_SCRAPER_URI']));
     }
 
 
     public function testResultsContainOnlyAccepted()
     {
-    	$snippets = (new StackoverflowScraper)->fetch(new Uri('https://stackoverflow.com/questions/218384/what-is-a-nullpointerexception-and-how-do-i-fix-it'), ['only_accepted' => true]);
+    	$snippets = (new StackoverflowScraper)->fetch(new Uri($_SERVER['STACKOVERFLOW_SCRAPER_URI']), ['only_accepted' => true]);
     	$has = true;
     	
     	foreach ($snippets as $snippet) {

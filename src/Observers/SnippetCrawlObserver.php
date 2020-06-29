@@ -48,32 +48,51 @@ class SnippetCrawlObserver extends CrawlObserver
      */
     public function crawled(UriInterface $url, ResponseInterface $response, ?UriInterface $foundOnUrl = null)
     {
-        $crawler = new Crawler((string)$response->getBody());
+        // Must crawl uri once
+        if ($this->webCrawler->isCrawled($url)) return;
 
+        // Create crawler from reponse body
+        $crawler = new Crawler((string) $response->getBody());
+
+        // Must contains snippets
         if (0 === $crawler->filter($this->webCrawler->getConfig()['html_tags']['snippet'])->count()) return;
 
+        // Only crawl specified langs
+        if (!$this->hasLang($crawler)) return;
+
+        // New meta snippet
+        $metaSnippet = new MetaSnippetCollection([
+            'uri' => (string) $url,
+            'snippets' => $this->webCrawler->getScraper($url->getHost())->fetchFromDocument($crawler)
+        ]);
+
+        // Must contains snippets
+        if (0 === count($metaSnippet->snippets)) return;
+
+        // Get page description
         $summTags = 'meta[name="description"], meta[property="og:description"]';
         $summary  = 0 === $crawler->filter($summTags)->count() ? '' : $crawler->filter($summTags)->attr('content');
 
-        $metaSnippet = new MetaSnippetCollection(['uri' => $url]);
-
         try {
             $metaSnippet->page = new WebPage([
-                'link'      => $url,
                 'summary'   => $summary,
+                'link'      => (string) $url,
                 'title'     => $crawler->filter('title')->text(),
+                'lang'      => $crawler->filter('html')->attr('lang'),
                 'metaTags'  => $crawler->filter('meta')
                                 ->each(function ($v) { return [$v->attr('name') => $v->attr('content')]; }),
-                'plainText' => $crawler->filter($this->webCrawler->getConfig()['html_tags']['index'])
-                                        ->each(function ($v) { return ' ' . $v->text(); }),
+                'plainText' => implode(' ', $crawler->filter($this->webCrawler->getConfig()['html_tags']['index'])
+                                        ->each(function ($v) { return $v->text(); })),
             ]);
         } catch(\Exception $e) {
             $this->webCrawler->logError($requestException);
         }
 
-        $metaSnippet->snippets = $this->webCrawler->getScraper($url->getHost())->fetchFromDocument($crawler);
+        // Save meta snippet
+        $this->webCrawler->addUniqueSnippet($metaSnippet);
 
-        $this->webCrawler->addSnippet($metaSnippet);
+        // Save crawled uri
+        $this->webCrawler->addToCrawledUris($url);
     }
 
     /**
@@ -86,5 +105,22 @@ class SnippetCrawlObserver extends CrawlObserver
     public function crawlFailed(UriInterface $url, RequestException $requestException, ?UriInterface $foundOnUrl = null)
     {
         $this->webCrawler->logError($requestException);
+    }
+
+    /**
+     * @param Symfony\Component\DomCrawler\Crawler  $crawler
+     * @return bool
+     */
+    private function hasLang(Crawler $crawler): bool
+    {
+        $has = false;
+
+        foreach ($this->webCrawler->getConfig()['crawler']['langs'] as $value) {
+            if (false !== stripos($crawler->filter('html')->attr('lang'), $value)) {
+                $has = true;
+            }
+        }
+
+        return $has;
     }
 }

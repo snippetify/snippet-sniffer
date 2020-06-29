@@ -15,31 +15,27 @@ use GuzzleHttp\Psr7\Uri;
 use Spatie\Crawler\Crawler;
 use Psr\Http\Message\UriInterface;
 use Spatie\Crawler\CrawlSubdomains;
-use Snippetify\SnippetSniffer\Common\Logger;
+use Snippetify\SnippetSniffer\Scrapers\ScraperInterface;
 use Snippetify\SnippetSniffer\Common\MetaSnippetCollection;
 use Snippetify\SnippetSniffer\Observers\SnippetCrawlObserver;
+use Snippetify\SnippetSniffer\Profiles\CrawlSubdomainsAndUniqueUri;
 
-class WebCrawler
+final class WebCrawler
 {
+    /**
+     * @var array
+     */
+    private $meta;
+
     /**
      * @var array
      */
     private $config;
 
     /**
-     * @var Snippetify\SnippetSniffer\Common\Logger
-     */
-    protected $logger;
-
-    /**
      * @var Spatie\Crawler\Crawler
      */
     private $crawler;
-
-    /**
-     * @var Psr\Http\Message\UriInterface[]
-     */
-    private $urlSeeds;
 
     /**
      * @var Snippetify\SnippetSniffer\Scrapers\ScraperInterface[]
@@ -49,7 +45,12 @@ class WebCrawler
     /**
      * @var Snippetify\SnippetSniffer\Common\MetaSnippetCollection[]
      */
-    private $snippets = [];
+    private $snippets;
+
+    /**
+     * @var Psr\Http\Message\UriInterface[]
+     */
+    private $crawledUris;
 
     /**
      * @var self
@@ -62,18 +63,21 @@ class WebCrawler
      */
     public function __construct(array $config = [])
     {
-        $this->config   = $config;
-        $this->scrapers = Core::$scrapers;
+        $this->config       = $config;
+        $this->scrapers     = Core::$scrapers;
+        $this->snippets     = [];
+        $this->crawledUris  = [];
 
         if (!empty($config['scrapers'])) {
             $this->scrapers = array_merge($this->scrapers, $config['scrapers']);
         }
-        
+
         if (empty($config['logger'])) {
             $this->config['logger'] = [];
         }
 
         if (empty($config['crawler'])) {
+            $this->config['crawler']['langs']                   = [Core::CRAWLER_LANG];
             $this->config['crawler']['profile']                 = Core::CRAWLER_PROFILE;
             $this->config['crawler']['user_agent']              = Core::CRAWLER_USER_AGENT;
             $this->config['crawler']['concurrency']             = Core::CRAWLER_CONCURENCY;
@@ -91,17 +95,21 @@ class WebCrawler
             $this->config['html_tags']['index']   = Core::HTML_TAGS_TO_INDEX;
         }
 
-        $this->logger  = Logger::create($this->config['logger']);
-
         $this->crawler = Crawler::create()
             ->setUserAgent($this->config['crawler']['user_agent'])
             ->setConcurrency($this->config['crawler']['concurrency'])
-            ->setMaximumDepth($this->config['crawler']['maximum_depth'])
-            ->setMaximumCrawlCount($this->config['crawler']['maximum_crawl_count'])
             ->setParseableMimeTypes($this->config['crawler']['parseable_mime_types'])
             ->setMaximumResponseSize($this->config['crawler']['maximum_response_size'])
             ->setDelayBetweenRequests($this->config['crawler']['delay_between_requests'])
         ;
+
+        if ($this->config['crawler']['maximum_depth']) {
+            $this->crawler->setMaximumDepth($this->config['crawler']['maximum_depth']);
+        }
+
+        if ($this->config['crawler']['maximum_crawl_count']) {
+            $this->crawler->setMaximumCrawlCount($this->config['crawler']['maximum_crawl_count']);
+        }
 
         if ($this->config['crawler']['ignore_robots']) $this->crawler->ignoreRobots();
         if ($this->config['crawler']['execute_javascript']) $this->crawler->executeJavaScript();
@@ -127,14 +135,6 @@ class WebCrawler
     }
 
     /**
-     * @return  Snippetify\SnippetSniffer\Scrapers\ScraperInterface[]
-     */
-    public function getScrapers(): array
-    {
-        return $this->scrapers;
-    }
-
-    /**
      * @param  Snippetify\SnippetSniffer\Common\MetaSnippetCollection[] $snippets
      * @return void
      */
@@ -155,6 +155,44 @@ class WebCrawler
     }
 
     /**
+     * @param  Snippetify\SnippetSniffer\Common\MetaSnippetCollection $snippet
+     * @return self
+     */
+    public function addUniqueSnippet(MetaSnippetCollection $snippet): self
+    {
+        $has = false;
+
+        foreach ($this->snippets as $item) {
+            if ((string) $item->uri === (string) $snippet->uri) {
+                $has = true;
+                break;
+            }
+        }
+
+        if (!$has) $this->snippets[] = $snippet;
+
+        return $this;
+    }
+
+    /**
+     * @param  Psr\Http\Message\UriInterface  $uri
+     * @return bool
+     */
+    public function isCrawled(UriInterface $uri): bool
+    {
+        return in_array($uri, $this->crawledUris);
+    }
+
+    /**
+     * @param  Psr\Http\Message\UriInterface  $uri
+     * @return void
+     */
+    public function addToCrawledUris(UriInterface $uri): void
+    {
+        $this->crawledUris[] = $uri;
+    }
+
+    /**
      * Add scraper.
      *
      * @param  string  $name
@@ -170,6 +208,14 @@ class WebCrawler
         $this->scrapers[$name] = $class;
 
         return $this;
+    }
+
+    /**
+     * @return  Snippetify\SnippetSniffer\Scrapers\ScraperInterface[]
+     */
+    public function getScrapers(): array
+    {
+        return $this->scrapers;
     }
 
     /**
@@ -214,25 +260,19 @@ class WebCrawler
             }
         }
 
+        $this->meta = $meta;
+
         $this->crawler->setCrawlObserver(new SnippetCrawlObserver($this));
         
         foreach ($uris as $uri) {
-            $this->crawler
-                ->setCrawlProfile(new $this->config['crawler']['profile']($uri))
-                ->startCrawling($uri);
+            if (CrawlSubdomainsAndUniqueUri::class === $this->config['crawler']['profile']) {
+                $this->crawler->setCrawlProfile(new $this->config['crawler']['profile']($uri, $this));
+            } else {
+                $this->crawler->setCrawlProfile(new $this->config['crawler']['profile']($uri));
+            }
+            $this->crawler->startCrawling($uri);
         }
-        $this->logger->log(json_encode($this->snippets));
-        return $this->snippets;
-    }
 
-    /**
-     * Log error.
-     *
-     * @param  string  $message
-     * @return  void
-     */
-    public function logError(string $message): void
-    {
-        $this->logger->log($message, Logger::ERROR);
+        return $this->snippets;
     }
 }

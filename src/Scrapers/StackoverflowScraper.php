@@ -86,12 +86,12 @@ final class StackoverflowScraper extends AbstractScraper
         return new Snippet([
             'tags'          => $tags,
             'title'         => $title,
-            'type'          => Snippet::WIKI_TYPE,
+            'type'          => Snippet::ROBOT_TYPE,
             'code'          => $node->filter('code')->text(),
             'description'   => $desc,
             'meta'          => [
                 'accepted'  => $meta['accepted'],
-                'url'       => $node->getUri(),
+                'url'       => $crawler->getUri(),
                 'target'    => $this->config['app'],
                 'website'   => $this->fetchWebsiteMetadata($crawler)
             ]

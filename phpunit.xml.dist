@@ -21,5 +21,8 @@
         <server name="PROVIDER_CX" value=""/>
         <server name="PROVIDER_KEY" value=""/>
         <server name="APP_ENV" value="testing"/>
+        <server name="CRAWLER_URI" value=""/>
+        <server name="DEFAULT_SCRAPER_URI" value=""/>
+        <server name="STACKOVERFLOW_SCRAPER_URI" value=""/>
     </php>
 </phpunit>

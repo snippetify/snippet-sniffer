@@ -185,11 +185,11 @@ abstract class AbstractScraper implements ScraperInterface
         return new Snippet([
             'tags'          => $tags,
             'code'          => $node->text(),
-            'type'          => Snippet::WIKI_TYPE,
+            'type'          => Snippet::ROBOT_TYPE,
             'title'         => $crawler->filter('title')->text(),
             'description'   => $desc,
             'meta'          => [
-                'url'       => $node->getUri(),
+                'url'       => $crawler->getUri(),
                 'target'    => $this->config['app'],
                 'website'   => $this->fetchWebsiteMetadata($crawler)
             ]

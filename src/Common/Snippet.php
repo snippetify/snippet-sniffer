@@ -18,7 +18,7 @@ use Snippetify\ProgrammingLanguages\Facades\Languages;
  */
 class Snippet
 {
-    const WIKI_TYPE = 'wiki';
+    const ROBOT_TYPE = 'robot';
 
     /**
      * @var string

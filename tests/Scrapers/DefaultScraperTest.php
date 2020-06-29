@@ -18,6 +18,6 @@ class DefaultScraperTest extends AbstractScraperTest
 {
     protected function setUp(): void
     {
-        $this->snippets = (new DefaultScraper)->fetch(new Uri('https://code.visualstudio.com/api/references/vscode-api'));
+        $this->snippets = (new DefaultScraper)->fetch(new Uri($_SERVER['DEFAULT_SCRAPER_URI']));
     }
 }

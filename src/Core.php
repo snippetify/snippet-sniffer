@@ -11,6 +11,8 @@
 
 namespace Snippetify\SnippetSniffer;
 
+use Snippetify\SnippetSniffer\Profiles\CrawlSubdomainsAndUniqueUri;
+
 class Core
 {
     public const APP_NAME      = 'Snippet sniffer';
@@ -18,16 +20,17 @@ class Core
     public const APP_VERSION   = '1.1.0';
 
     // Crawler
-    public const CRAWLER_PROFILE                = \Spatie\Crawler\CrawlSubdomains::class;
+    public const CRAWLER_LANG                   = 'en';
+    public const CRAWLER_PROFILE                = CrawlSubdomainsAndUniqueUri::class;
     public const CRAWLER_CONCURENCY             = 10;
     public const CRAWLER_IGNORE_ROBOTS          = true;
-    public const CRAWLER_MAXIMUM_DEPTH          = 50;
+    public const CRAWLER_MAXIMUM_DEPTH          = null;
     public const CRAWLER_EXECUTE_JAVASCRIPT     = false;
-    public const CRAWLER_MAXIMUM_CRAWL_COUNT    = 1500;
+    public const CRAWLER_MAXIMUM_CRAWL_COUNT    = null;
     public const CRAWLER_PARSEABLE_MIME_TYPES   = 'text/html';
     public const CRAWLER_MAXIMUM_RESPONSE_SIZE  = 1024 * 1024 * 3;
     public const CRAWLER_DELAY_BETWEEN_REQUESTS = 250;
-    public const CRAWLER_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0';
+    public const CRAWLER_USER_AGENT = 'Mozilla/5.0 (compatible; Sniptbot/1.0; +http://www.snippetify.com/bot)';
 
     /**
      * Html Snippet tags
