@@ -13,15 +13,12 @@ namespace Snippetify\SnippetSniffer\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Snippetify\SnippetSniffer\SnippetSniffer;
-use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpClient\Exception\InvalidArgumentException;
 
 class SnippetSnifferTest extends TestCase
 {
     /**
-     * The sniffer.
-     *
-     * @var string
+     * @var Snippetify\SnippetSniffer\SnippetSniffer
      */
     protected $sniffer;
 

@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the snippetify package.
+ *
+ * (c) Evens Pierre <evenspierre@snippetify.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Snippetify\SnippetSniffer;
 
 use Snippetify\SnippetSniffer\Scrapers\ScraperInterface;
@@ -8,36 +17,27 @@ use Snippetify\SnippetSniffer\Providers\ProviderInterface;
 final class SnippetSniffer
 {
     /**
-     * Configuration.
-     *
-     * @var string
+     * @var array
      */
     private $config;
 
     /**
-     * Scrapers.
-     *
-     * @var array
+     * @var Snippetify\SnippetSniffer\Scrapers\ScraperInterface[]
      */
     private $scrapers;
 
     /**
-     * Providers.
-     *
-     * @var array
+     * @var Snippetify\SnippetSniffer\Providers\ProviderInterface[]
      */
     private $providers;
 
     /**
-     * Singletion.
-     *
      * @var self
      */
     private static $instance;
 
     /**
-     * Create a new instance.
-     *
+     * @param  array  $config
      * @return void
      */
     public function __construct(array $config)
@@ -62,8 +62,6 @@ final class SnippetSniffer
     }
 
     /**
-     * Create an instance.
-     *
      * @param  array  $config
      * @return  self
      */
@@ -79,7 +77,7 @@ final class SnippetSniffer
      *
      * @param  string  $name
      * @param  string  $class
-     * @return  self
+     * @return self
      */
     public function addScraper(string $name, string $class): self
     {
@@ -97,7 +95,7 @@ final class SnippetSniffer
      *
      * @param  string  $name
      * @param  string  $class
-     * @return  self
+     * @return self
      */
     public function addProvider(string $name, string $class): self
     {
@@ -115,7 +113,7 @@ final class SnippetSniffer
      *
      * @param  string  $query
      * @param  array  $meta
-     * @return  Snippet[]
+     * @return Snippetify\SnippetSniffer\Common\Snippet[]
      */
     public function fetch(string $query, array $meta = []): array
     {
@@ -125,14 +123,14 @@ final class SnippetSniffer
         foreach ($urls as $url) {
             $snippets = array_merge($snippets, $this->scraper($url->getHost())->fetch($url));
         }
-        
+        \Snippetify\SnippetSniffer\Common\Logger::create()->log(json_encode($snippets));
         return $snippets;
     }
 
     /**
      * Get provider.
      *
-     * @return  ProviderInterface
+     * @return  Snippetify\SnippetSniffer\Providers\ProviderInterface
      */
     private function provider(): ProviderInterface
     {
@@ -162,7 +160,7 @@ final class SnippetSniffer
     /**
      * Get scraper.
      *
-     * @return  ScraperInterface
+     * @return  Snippetify\SnippetSniffer\Scrapers\ScraperInterface
      */
     private function scraper(string $name): ScraperInterface
     {
@@ -176,8 +174,7 @@ final class SnippetSniffer
             }
         }
 
-        $name = array_key_exists($name, $this->scrapers) ? $name : 'default';
-
+        $name    = array_key_exists($name, $this->scrapers) ? $name : 'default';
         $scraper = new $this->scrapers[$name]($this->config);
 
         if (!$scraper instanceof ScraperInterface) {

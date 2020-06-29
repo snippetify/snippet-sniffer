@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the snippetify package.
+ *
+ * (c) Evens Pierre <evenspierre@snippetify.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Snippetify\SnippetSniffer\Scrapers;
 
 use Goutte\Client;
@@ -35,8 +44,6 @@ abstract class AbstractScraper implements ScraperInterface
     protected $snippets = [];
 
     /**
-     * Create new instance.
-     *
      * @param  array  $config
      * @return void
      */
@@ -50,70 +57,141 @@ abstract class AbstractScraper implements ScraperInterface
             $this->config['app']['name']        = Core::APP_NAME;
             $this->config['app']['type']        = Core::APP_TYPE;
             $this->config['app']['version']     = Core::APP_VERSION;
-            $this->config['app']['user_agent']  = Core::USER_AGENT;
+        }
+
+        if (empty($config['crawler'])) {
+            $this->config['crawler']['user_agent']  = Core::CRAWLER_USER_AGENT;
+        }
+
+        if (empty($config['html_tags'])) {
+            $this->config['html_tags']['snippet']   = Core::HTML_SNIPPET_TAGS;
+            $this->config['html_tags']['index']     = Core::HTML_TAGS_TO_INDEX;
         }
 
         $this->logger = Logger::create($this->config['logger']);
     }
 
     /**
-     * Get crawler.
+     * Fetch snippets.
      *
      * @param  Psr\Http\Message\UriInterface  $uri
-     * @return  Symfony\Component\DomCrawler\Crawler
+     * @param  array  $options
+     * @return Snippetify\SnippetSniffer\Common\Snippet[]
      */
-    protected function getCrawler(UriInterface $uri): Crawler
+    public function fetch(UriInterface $uri, array $options = []): array
     {
-        return (new Client)->request('GET', $uri, ['headers' => ['User-Agent' => $this->config['app']['user_agent']]]);
+        $this->fetchFromDocument($this->getCrawler($uri), $options);
+        
+        return $this->snippets;
     }
 
     /**
-     * Has snippet.
+     * Fetch fom document.
      *
-     * @param  Crawler  $node
-     * @return  Snippet[]
+     * @param  string|Symfony\Component\DomCrawler\Crawler  $document
+     * @param  array  $options
+     * @return Snippetify\SnippetSniffer\Common\Snippet[]
      */
-    protected function hasSnippet(Crawler $node): bool
+    public function fetchFromDocument($document, array $options = []): array
     {
-    	$has = false;
+        $crawler = $document instanceof Crawler ? $document : new Crawler($document);
 
-    	foreach ($this->snippets as $snippet) {
-    		if ($snippet->code == $node->text()) {
-    			$has = true;
-    			break;
-    		}
-    	}
+        try {
+            
+            $htmlTags = explode(',', $this->config['html_tags']['snippet']);
 
-    	return $has;
+            foreach ($htmlTags as $value) {
+                $crawler->filter($value)->each(function ($node) use ($crawler) {
+                    $this->hydrateSnippets($node, $crawler);
+                });
+            }
+
+        } catch (\Exception $e) {
+            $this->logError($e);
+        }
+
+        return $this->snippets;
+    }
+
+    /**
+     * Get crawler.
+     *
+     * @param  Psr\Http\Message\UriInterface  $uri
+     * @return Symfony\Component\DomCrawler\Crawler
+     */
+    protected function getCrawler(UriInterface $uri): Crawler
+    {
+        return (new Client)->request('GET', $uri, ['headers' => ['User-Agent' => $this->config['crawler']['user_agent']]]);
     }
 
     /**
      * Hydrate snippets.
      *
-     * @param  Crawler  $node
-     * @param  Crawler  $crawler
-     * @param  UriInterface  $uri
-     * @return  Snippet[]
+     * @param  Symfony\Component\DomCrawler\Crawler  $node
+     * @param  Symfony\Component\DomCrawler\Crawler  $crawler
+     * @param  array  $meta
+     * @return void
      */
-    protected function hydrateSnippets(Crawler $node, Crawler $crawler, UriInterface $uri): void
+    protected function hydrateSnippets(Crawler $node, Crawler $crawler, array $meta = []): void
     {
-    	if ($node->count() === 0 || // When there is no snippets
-            count($tags = $this->fetchTags($node)) === 0 || // When there is no tags
-            $this->hasSnippet($node)) return; // If snippet is already saved
+    	if ($this->containsSnippet($this->snippets, $node)) return;
 
-        $desc = 0 === $crawler->filter('meta[name="description"], meta[property="og:description"]')->count() ? 
-            '' : $crawler->filter('meta[name="description"], meta[property="og:description"]')->attr('content');
+        if ($snippet = $this->fetchSnippet($node, $crawler, $meta)) $this->snippets[] = $snippet;
+    }
 
-        $this->snippets[] = new Snippet([
-            'tags' 			=> $tags,
-            'code' 			=> $node->text(),
-            'type' 			=> Snippet::WIKI_TYPE,
-            'title' 		=> $crawler->filter('title')->text(),
+    /**
+     * Contains snippet.
+     *
+     * @param  Snippetify\SnippetSniffer\Common\Snippet[]  $snippets
+     * @param  Symfony\Component\DomCrawler\Crawler  $node
+     * @return bool
+     */
+    protected function containsSnippet(array $snippets, Crawler $node): bool
+    {
+        $has = false;
+
+        try {
+            foreach ($snippets as $snippet) {
+                if ($snippet->code == $node->text()) {
+                    $has = true;
+                    break;
+                }
+            }
+        } catch(\Exception $e) {
+            $this->logError($e);
+        }
+
+        return $has;
+    }
+
+    /**
+     * Fetch snippet.
+     *
+     * @param  Symfony\Component\DomCrawler\Crawler  $node
+     * @param  Symfony\Component\DomCrawler\Crawler  $crawler
+     * @param  array  $meta
+     * @return ?Snippetify\SnippetSniffer\Common\Snippet
+     */
+    protected function fetchSnippet(Crawler $node, Crawler $crawler, array $meta = []): ?Snippet
+    {
+         // When there is no snippets
+         // When there is no tags
+        if (0 === $node->count() || 0 === count($tags = $this->fetchTags($node))) return null;
+
+        // Desc
+        $descTag = 'meta[name="description"], meta[property="og:description"]';
+        $desc = 0 === $crawler->filter($descTag)->count() ? '' : $crawler->filter($descTag)->attr('content');
+
+        return new Snippet([
+            'tags'          => $tags,
+            'code'          => $node->text(),
+            'type'          => Snippet::WIKI_TYPE,
+            'title'         => $crawler->filter('title')->text(),
             'description'   => $desc,
-            'meta' 			=> [
+            'meta'          => [
                 'url'       => $node->getUri(),
-                'target' 	=> $this->config['app'],
-                'website'   => $this->fetchWebsiteMetadata($node, $crawler)
+                'target'    => $this->config['app'],
+                'website'   => $this->fetchWebsiteMetadata($crawler)
             ]
         ]);
     }
@@ -121,8 +199,8 @@ abstract class AbstractScraper implements ScraperInterface
     /**
      * Fetch tags.
      *
-     * @param  Crawler  $node
-     * @return  Snippet[]
+     * @param  Symfony\Component\DomCrawler\Crawler  $node
+     * @return array
      */
     protected function fetchTags(Crawler $node): array
     {
@@ -141,10 +219,10 @@ abstract class AbstractScraper implements ScraperInterface
     /**
      * Fetch website.
      *
-     * @param  Crawler  $node
-     * @return  Snippet[]
+     * @param  Symfony\Component\DomCrawler\Crawler  $crawler
+     * @return array
      */
-    protected function fetchWebsiteMetadata(Crawler $node, Crawler $crawler): array
+    protected function fetchWebsiteMetadata(Crawler $crawler): array
     {
         $title      = $crawler->filter('title')->text();
         $siteIcon   = $crawler->filter('link[rel="icon"]');
@@ -157,7 +235,7 @@ abstract class AbstractScraper implements ScraperInterface
         } else {
             $words = preg_split("/\||\-/", $title);
             if (count($words) > 0) $name = trim($words[count($words) - 1]);
-            else $name = (new Uri($node->getUri()))->getHost();
+            else $name = (new Uri($crawler->getUri()))->getHost();
         }
 
         if ($ogImage->count() > 0) {
@@ -173,7 +251,7 @@ abstract class AbstractScraper implements ScraperInterface
         return [
             'name'  => $name,
             'brand' => $brand,
-            'url'   => (new Uri($node->getUri()))->getHost(),
+            'url'   => (new Uri($crawler->getUri()))->getHost(),
         ];
     }
 

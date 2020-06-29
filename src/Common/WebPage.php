@@ -11,14 +11,20 @@
 
 namespace Snippetify\SnippetSniffer\Common;
 
-use Snippetify\ProgrammingLanguages\Facades\Languages;
-
 /**
- * The snippet's class.
+ * WebPage.
  */
-class Snippet
+class WebPage
 {
-    const WIKI_TYPE = 'wiki';
+    /**
+     * @var string
+     */
+    public $siteName;
+
+    /**
+     * @var Psr\Http\Message\UriInterface
+     */
+    public $siteUri;
 
     /**
      * @var string
@@ -28,32 +34,22 @@ class Snippet
     /**
      * @var string
      */
-    public $code;
+    public $summary;
+
+    /**
+     * @var Psr\Http\Message\UriInterface
+     */
+    public $link;
 
     /**
      * @var string
      */
-    public $description;
-
-    /**
-     * @var string
-     */
-    public $type;
-
-    /**
-     * @var string
-     */
-    public $language;
+    public $plainText;
 
     /**
      * @var array
      */
-    public $meta;
-
-    /**
-     * @var array
-     */
-    public $tags;
+    public $metaTags;
 
     /**
      * @return void
@@ -65,24 +61,6 @@ class Snippet
     			$this->{$key} = $value;
     		}
     	}
-
-        $this->setLanguageFromTags($attributes);
-    }
-
-    /**
-     * Set language from tags
-     *
-     * @return void
-     */
-    private function setLanguageFromTags(array $attributes)
-    {
-        if (!empty($attributes['tags'])) {
-            foreach ($attributes['tags'] as $tag) {
-                if (Languages::exists($tag)) {
-                    $this->language = ucfirst($tag);
-                }
-            }
-        }
     }
 
     /**
@@ -100,6 +78,6 @@ class Snippet
      * @return string
      */
     public function __toString() {
-        return "Snippet: ".json_encode($this->toArray());
+        return "Web Page: ".json_encode($this->toArray());
     }
 }
