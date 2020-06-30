@@ -3,6 +3,7 @@
 /logs
 .env.exemple
 phpunit.xml
+composer.lock
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
