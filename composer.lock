@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "69fa84d2f372f159a76563ec9f37c4b8",
+    "content-hash": "b433a97623ff75699e8278311cf138ad",
     "packages": [
         {
             "name": "fabpot/goutte",
@@ -68,12 +68,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "4894248e0a0e3f89cdc0ad0d43b234cb78cc0dc4"
+                "reference": "11019078108ee5a279c8d005746dd0946d682a9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/4894248e0a0e3f89cdc0ad0d43b234cb78cc0dc4",
-                "reference": "4894248e0a0e3f89cdc0ad0d43b234cb78cc0dc4",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/11019078108ee5a279c8d005746dd0946d682a9d",
+                "reference": "11019078108ee5a279c8d005746dd0946d682a9d",
                 "shasum": ""
             },
             "require": {
@@ -141,7 +141,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2020-06-27T14:51:48+00:00"
+            "time": "2020-06-29T05:35:07+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -671,16 +671,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-client.git",
-                "reference": "fd5d37ae5a76ee3c5301a762faf66bf9519132ef"
+                "reference": "2dfb5f6c5eff0e91e20e913f8c5452ed95b86621"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-client/zipball/fd5d37ae5a76ee3c5301a762faf66bf9519132ef",
-                "reference": "fd5d37ae5a76ee3c5301a762faf66bf9519132ef",
+                "url": "https://api.github.com/repos/php-fig/http-client/zipball/2dfb5f6c5eff0e91e20e913f8c5452ed95b86621",
+                "reference": "2dfb5f6c5eff0e91e20e913f8c5452ed95b86621",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0",
+                "php": "^7.0 || ^8.0",
                 "psr/http-message": "^1.0"
             },
             "type": "library",
@@ -712,7 +712,7 @@
                 "psr",
                 "psr-18"
             ],
-            "time": "2019-09-04T06:46:09+00:00"
+            "time": "2020-06-29T06:28:15+00:00"
         },
         {
             "name": "psr/http-message",
@@ -1505,12 +1505,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-client.git",
-                "reference": "61aaa98629ac30ef9ee9a148444d8ab581d5c4bb"
+                "reference": "e8f06b5b239e035deb3efae6a4566cc0a5fbed40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-client/zipball/61aaa98629ac30ef9ee9a148444d8ab581d5c4bb",
-                "reference": "61aaa98629ac30ef9ee9a148444d8ab581d5c4bb",
+                "url": "https://api.github.com/repos/symfony/http-client/zipball/e8f06b5b239e035deb3efae6a4566cc0a5fbed40",
+                "reference": "e8f06b5b239e035deb3efae6a4566cc0a5fbed40",
                 "shasum": ""
             },
             "require": {
@@ -1583,7 +1583,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-06-28T15:36:15+00:00"
+            "time": "2020-06-28T15:56:16+00:00"
         },
         {
             "name": "symfony/http-client-contracts",
@@ -1666,12 +1666,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/mime.git",
-                "reference": "2846e1229c6d55ca174a3c9fe2a66603cdb0588c"
+                "reference": "6d103dc2e1e38f7a214233fa108f4c68be26a854"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/mime/zipball/2846e1229c6d55ca174a3c9fe2a66603cdb0588c",
-                "reference": "2846e1229c6d55ca174a3c9fe2a66603cdb0588c",
+                "url": "https://api.github.com/repos/symfony/mime/zipball/6d103dc2e1e38f7a214233fa108f4c68be26a854",
+                "reference": "6d103dc2e1e38f7a214233fa108f4c68be26a854",
                 "shasum": ""
             },
             "require": {
@@ -1736,7 +1736,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-06-28T15:36:15+00:00"
+            "time": "2020-06-29T14:32:23+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -2558,12 +2558,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "5796d127b0c4ff505b77455148ea9d5269d99758"
+                "reference": "969b211f9a51aa1f6c01d1d2aef56d3bd91598e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/5796d127b0c4ff505b77455148ea9d5269d99758",
-                "reference": "5796d127b0c4ff505b77455148ea9d5269d99758",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/969b211f9a51aa1f6c01d1d2aef56d3bd91598e5",
+                "reference": "969b211f9a51aa1f6c01d1d2aef56d3bd91598e5",
                 "shasum": ""
             },
             "require": {
@@ -2604,32 +2604,33 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-06-28T07:02:41+00:00"
+            "time": "2020-06-29T13:22:24+00:00"
         },
         {
             "name": "phar-io/manifest",
-            "version": "1.0.3",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phar-io/manifest.git",
-                "reference": "7761fcacf03b4d4f16e7ccb606d4879ca431fcf4"
+                "reference": "85265efd3af7ba3ca4b2a2c34dbfc5788dd29133"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phar-io/manifest/zipball/7761fcacf03b4d4f16e7ccb606d4879ca431fcf4",
-                "reference": "7761fcacf03b4d4f16e7ccb606d4879ca431fcf4",
+                "url": "https://api.github.com/repos/phar-io/manifest/zipball/85265efd3af7ba3ca4b2a2c34dbfc5788dd29133",
+                "reference": "85265efd3af7ba3ca4b2a2c34dbfc5788dd29133",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-phar": "*",
-                "phar-io/version": "^2.0",
-                "php": "^5.6 || ^7.0"
+                "ext-xmlwriter": "*",
+                "phar-io/version": "^3.0.1",
+                "php": "^7.2 || ^8.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "2.0.x-dev"
                 }
             },
             "autoload": {
@@ -2659,24 +2660,24 @@
                 }
             ],
             "description": "Component for reading phar.io manifest information from a PHP Archive (PHAR)",
-            "time": "2018-07-08T19:23:20+00:00"
+            "time": "2020-06-27T14:33:11+00:00"
         },
         {
             "name": "phar-io/version",
-            "version": "2.0.1",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phar-io/version.git",
-                "reference": "45a2ec53a73c70ce41d55cedef9063630abaf1b6"
+                "reference": "c6bb6825def89e0a32220f88337f8ceaf1975fa0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phar-io/version/zipball/45a2ec53a73c70ce41d55cedef9063630abaf1b6",
-                "reference": "45a2ec53a73c70ce41d55cedef9063630abaf1b6",
+                "url": "https://api.github.com/repos/phar-io/version/zipball/c6bb6825def89e0a32220f88337f8ceaf1975fa0",
+                "reference": "c6bb6825def89e0a32220f88337f8ceaf1975fa0",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.6 || ^7.0"
+                "php": "^7.2 || ^8.0"
             },
             "type": "library",
             "autoload": {
@@ -2706,7 +2707,7 @@
                 }
             ],
             "description": "Library for handling version information and constraints",
-            "time": "2018-07-08T19:19:57+00:00"
+            "time": "2020-06-27T14:39:04+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -3274,12 +3275,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "f39eca83c55c23afc9bb1cfe6f1078e6ea9e3fe5"
+                "reference": "76d8dbc906f6ed0d54bba2e025ad5df6c20c1d85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f39eca83c55c23afc9bb1cfe6f1078e6ea9e3fe5",
-                "reference": "f39eca83c55c23afc9bb1cfe6f1078e6ea9e3fe5",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/76d8dbc906f6ed0d54bba2e025ad5df6c20c1d85",
+                "reference": "76d8dbc906f6ed0d54bba2e025ad5df6c20c1d85",
                 "shasum": ""
             },
             "require": {
@@ -3291,8 +3292,8 @@
                 "ext-xml": "*",
                 "ext-xmlwriter": "*",
                 "myclabs/deep-copy": "^1.9.5",
-                "phar-io/manifest": "^1.0.3",
-                "phar-io/version": "^2.0.1",
+                "phar-io/manifest": "^2.0.1",
+                "phar-io/version": "^3.0.2",
                 "php": "^7.3 || ^8.0",
                 "phpspec/prophecy": "^1.10.3",
                 "phpunit/php-code-coverage": "^9.0",
@@ -3302,7 +3303,7 @@
                 "phpunit/php-timer": "^5.0.1",
                 "sebastian/code-unit": "^1.0.5",
                 "sebastian/comparator": "^4.0.3",
-                "sebastian/diff": "^4.0.1",
+                "sebastian/diff": "^4.0.2",
                 "sebastian/environment": "^5.1.2",
                 "sebastian/exporter": "^4.0.2",
                 "sebastian/global-state": "^5.0",
@@ -3364,7 +3365,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-06-28T12:11:10+00:00"
+            "time": "2020-06-30T09:08:03+00:00"
         },
         {
             "name": "sebastian/code-unit",
@@ -3545,16 +3546,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/diff.git",
-                "reference": "679f5da72a94cfa7cd07c3728f5befde5fa956a7"
+                "reference": "1e90b4cf905a7d06c420b1d2e9d11a4dc8a13113"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/679f5da72a94cfa7cd07c3728f5befde5fa956a7",
-                "reference": "679f5da72a94cfa7cd07c3728f5befde5fa956a7",
+                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/1e90b4cf905a7d06c420b1d2e9d11a4dc8a13113",
+                "reference": "1e90b4cf905a7d06c420b1d2e9d11a4dc8a13113",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.3"
+                "php": "^7.3 || ^8.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^9.0",
@@ -3599,7 +3600,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-06-28T12:07:12+00:00"
+            "time": "2020-06-30T04:46:02+00:00"
         },
         {
             "name": "sebastian/environment",
@@ -4201,10 +4202,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "fabpot/goutte": 20,
-        "monolog/monolog": 20,
-        "snippetify/programming-languages": 20,
-        "spatie/crawler": 20
+        "spatie/crawler": 20,
+        "snippetify/programming-languages": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
