@@ -4,10 +4,10 @@
 
 ## What it does
 
-This library allows you 
+This library allows you
 
-1. To get url seeds from search engine api (Google)
-2. Get code snippets from any web page by crawling url seeds.
+1. To get code snippets using search engine api (Google)
+2. To get code snippets from any web page by crawling url seeds.
 
 ## How to use it
 
@@ -101,7 +101,7 @@ $urlSeeds = GoogleProvider::create($config)->fetch($query, $meta);
 2. Create your new class in the `Snippetify\SnippetSniffer\Providers` folder
 3. Each provider implements `Snippetify\SnippetSniffer\Providers\ProviderInterface` 
 4. Take a look at `Snippetify\SnippetSniffer\Providers\GoogleProvider` to get you helped
-5. Your fetch method must return an array of `GuzzleHttp\Psr7\Uri`
+5. Your fetch method must return an array of `Psr\Http\Message\UriInterface`
 6. Add it in the providers stacks in the `Snippetify\SnippetSniffer\Core.php`
 7. Write tests. Take a look at `Snippetify\SnippetSniffer\Tests\Providers\GoogleProviderTest` to get you helped
 8. Send a pull request to us
@@ -110,7 +110,7 @@ $urlSeeds = GoogleProvider::create($config)->fetch($query, $meta);
 
 1. Your provider must implement `Snippetify\SnippetSniffer\Providers\ProviderInterface` 
 2. Take a look at `Snippetify\SnippetSniffer\Providers\GoogleProvider` to get you helped
-3. Your fetch method must return an array of `GuzzleHttp\Psr7\Uri`
+3. Your fetch method must return an array of `Psr\Http\Message\UriInterface`
 4. Pass your new provider in the configuration parameter or use the `addProvider` method
 
 ```php
@@ -119,15 +119,15 @@ use Snippetify\SnippetSniffer\SnippetSniffer;
 // Use Configurations
 $config = [
   "providers" => [
-    "provider_name" => "ProviderClass::class",
-    "provider_2_name" => "Provider2Class::class" // You can add as many as you want
+    "provider_name" => ProviderClass::class,
+    "provider_2_name" => Provider2Class::class // You can add as many as you want
   ]
 ];
 
 // Or use addProvider method as follow
 SnippetSniffer::create(...)
-  ->addProvider('provider_name', 'ProviderClass::class')
-  ->addProvider('provider_2_name', 'Provider2Class::class') // You can add as many as you want
+  ->addProvider('provider_name', ProviderClass::class)
+  ->addProvider('provider_2_name', Provider2Class::class) // You can add as many as you want
   ...
 ```
 
@@ -189,21 +189,21 @@ use Snippetify\SnippetSniffer\SnippetSniffer;
 // Configurations
 $config = [
   "scrapers" => [
-    "scraper_name" => "ScraperClass::class",
-    "scraper_2_name" => "Scraper2Class::class" // You can add as many as you want
+    "scraper_name" => ScraperClass::class,
+    "scraper_2_name" => Scraper2Class::class // You can add as many as you want
   ]
 ];
 
 // Or use addProvider method as follow
 SnippetSniffer::create(...)
-  ->addScraper('scraper_name', 'ScraperClass::class')
-  ->addScraper('scraper_2_name', 'Scraper2Class::class') // You can add as many as you want
+  ->addScraper('scraper_name', ScraperClass::class)
+  ->addScraper('scraper_2_name', Scraper2Class::class) // You can add as many as you want
   ...
 ```
 
-### Sniptbot
+### Snippet crawler
 
-Sniptbot allows you to extract all snippets from a website by crawling it.
+Snippet crawler allows you to extract all snippets from a website by crawling it.
 
 ```php
 use Snippetify\SnippetSniffer\WebCrawler;
@@ -215,14 +215,13 @@ $config = [...];
 $snippets = WebCrawler::create($config)->fetch(['your uri']);
 ```
 
-
-
 #### Configuration reference
 
 ```php
 $config = [
   // Required 
   // Search engine api configuration keys
+  // https://developers.google.com/custom-search/v1/introduction
   'provider' => [
     "cx" => "your google Search engine ID",
     "key" => "your google API key"
