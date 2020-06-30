@@ -36,8 +36,8 @@
         "php": "^7.3.0",
         "guzzlehttp/psr7": "^1.4",
         "fabpot/goutte": "^4.0",
-        "monolog/monolog": "^2.1",
         "spatie/crawler": "dev-master",
+        "monolog/monolog": "^1.12|^2.0",
         "snippetify/programming-languages": "dev-master"
     },
     "require-dev": {
