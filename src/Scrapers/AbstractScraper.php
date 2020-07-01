@@ -99,15 +99,9 @@ abstract class AbstractScraper implements ScraperInterface
         $crawler = $document instanceof Crawler ? $document : new Crawler($document, $uri);
 
         try {
-            
-            $htmlTags = explode(',', $this->config['html_tags']['snippet']);
-
-            foreach ($htmlTags as $value) {
-                $crawler->filter($value)->each(function ($node) use ($crawler, $options) {
-                    $this->hydrateSnippets($node, $crawler, $options);
-                });
-            }
-
+            $crawler->filter($this->config['html_tags']['snippet'])->each(function ($node) use ($crawler, $options) {
+                $this->hydrateSnippets($node, $crawler, $options);
+            });
         } catch (\Exception $e) {
             $this->logError($e);
         }
