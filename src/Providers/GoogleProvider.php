@@ -56,7 +56,7 @@ final class GoogleProvider implements ProviderInterface
      * @param  array  $config
      * @return  self
      */
-    public static function create(array $config): self
+    public static function create(array $config): ProviderInterface
     {
         if (is_null(self::$instance)) self::$instance = new self($config);
 

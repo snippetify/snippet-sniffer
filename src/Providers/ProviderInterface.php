@@ -17,5 +17,5 @@ interface ProviderInterface
 
     public function __construct(array $config);
 
-    public function fetch(string $query, array $meta): array;
+    public function fetch(string $query, array $meta = []): array;
 }
