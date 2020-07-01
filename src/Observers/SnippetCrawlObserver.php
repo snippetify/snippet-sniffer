@@ -52,7 +52,7 @@ class SnippetCrawlObserver extends CrawlObserver
         if ($this->webCrawler->isCrawled($url)) return;
 
         // Create crawler from reponse body
-        $crawler = new Crawler((string) $response->getBody());
+        $crawler = new Crawler((string) $response->getBody(), (string) $url);
 
         // Must contains snippets
         if (0 === $crawler->filter($this->webCrawler->getConfig()['html_tags']['snippet'])->count()) return;
@@ -63,7 +63,8 @@ class SnippetCrawlObserver extends CrawlObserver
         // New meta snippet
         $metaSnippet = new MetaSnippetCollection([
             'uri' => (string) $url,
-            'snippets' => $this->webCrawler->getScraper($url->getHost())->fetchFromDocument($crawler)
+            'snippets' => $this->webCrawler->getScraper($url->getHost())
+                ->fetchFromDocument($crawler, $this->webCrawler->getMeta(), $url)
         ]);
 
         // Must contains snippets

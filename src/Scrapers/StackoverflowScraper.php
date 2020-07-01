@@ -26,7 +26,7 @@ final class StackoverflowScraper extends AbstractScraper
      */
     public function fetch(UriInterface $uri, array $options = []): array
     {
-        $this->fetchFromDocument($this->getCrawler($uri), $options);
+        $this->fetchFromDocument($this->getCrawler($uri), $options, $uri);
         
         return $this->snippets;
     }
@@ -36,11 +36,12 @@ final class StackoverflowScraper extends AbstractScraper
      *
      * @param  string|Symfony\Component\DomCrawler\Crawler  $document
      * @param  array  $options
+     * @param  Psr\Http\Message\UriInterface  $uri
      * @return Snippetify\SnippetSniffer\Common\Snippet[]
      */
-    public function fetchFromDocument($document, array $options = []): array
+    public function fetchFromDocument($document, array $options = [], ?UriInterface $uri = null): array
     {
-        $crawler = $document instanceof Crawler ? $document : new Crawler($document);
+        $crawler = $document instanceof Crawler ? $document : new Crawler($document, $uri);
 
         try {
             $crawler->filter('#answers .answer')->each(function ($node) use ($crawler, $options) {
@@ -48,11 +49,12 @@ final class StackoverflowScraper extends AbstractScraper
                 if (($accepted = strpos($node->attr('class'), 'accepted') !== false) === false && // Only accepted snippets
                     isset($options['only_accepted']) && $options['only_accepted'] === true) return;
                 
-                $meta = ['accepted' => $accepted];
+                $options['accepted'] = $accepted;
 
-                $node->filter('pre')->each(function ($node) use ($crawler, $meta) {
-                    if ($this->containsSnippet($this->snippets, $node->filter('code'))) return;
-                    if ($snippet = $this->fetchSnippet($node, $crawler, $meta)) $this->snippets[] = $snippet;
+                $node->filter('pre')->each(function ($node) use ($crawler, $options) {
+                    if ($this->containsSnippet($node->filter('code'))) return;
+                    if ($this->hasMoreSnippetsPerPage($crawler, $options)) return;
+                    if ($snippet = $this->fetchSnippet($node, $crawler, $options)) $this->snippets[] = $snippet;
                 });
             });
         } catch (\Exception $e) {

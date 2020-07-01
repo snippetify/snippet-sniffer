@@ -80,7 +80,7 @@ abstract class AbstractScraper implements ScraperInterface
      */
     public function fetch(UriInterface $uri, array $options = []): array
     {
-        $this->fetchFromDocument($this->getCrawler($uri), $options);
+        $this->fetchFromDocument($this->getCrawler($uri), $options, $uri);
         
         return $this->snippets;
     }
@@ -90,19 +90,20 @@ abstract class AbstractScraper implements ScraperInterface
      *
      * @param  string|Symfony\Component\DomCrawler\Crawler  $document
      * @param  array  $options
+     * @param  Psr\Http\Message\UriInterface  $uri
      * @return Snippetify\SnippetSniffer\Common\Snippet[]
      */
-    public function fetchFromDocument($document, array $options = []): array
+    public function fetchFromDocument($document, array $options = [], ?UriInterface $uri = null): array
     {
-        $crawler = $document instanceof Crawler ? $document : new Crawler($document);
+        $crawler = $document instanceof Crawler ? $document : new Crawler($document, $uri);
 
         try {
             
             $htmlTags = explode(',', $this->config['html_tags']['snippet']);
 
             foreach ($htmlTags as $value) {
-                $crawler->filter($value)->each(function ($node) use ($crawler) {
-                    $this->hydrateSnippets($node, $crawler);
+                $crawler->filter($value)->each(function ($node) use ($crawler, $options) {
+                    $this->hydrateSnippets($node, $crawler, $options);
                 });
             }
 
@@ -134,7 +135,9 @@ abstract class AbstractScraper implements ScraperInterface
      */
     protected function hydrateSnippets(Crawler $node, Crawler $crawler, array $meta = []): void
     {
-    	if ($this->containsSnippet($this->snippets, $node)) return;
+    	if ($this->containsSnippet($node)) return;
+
+        if ($this->hasMoreSnippetsPerPage($crawler, $meta)) return;
 
         if ($snippet = $this->fetchSnippet($node, $crawler, $meta)) $this->snippets[] = $snippet;
     }
@@ -142,16 +145,15 @@ abstract class AbstractScraper implements ScraperInterface
     /**
      * Contains snippet.
      *
-     * @param  Snippetify\SnippetSniffer\Common\Snippet[]  $snippets
      * @param  Symfony\Component\DomCrawler\Crawler  $node
      * @return bool
      */
-    protected function containsSnippet(array $snippets, Crawler $node): bool
+    protected function containsSnippet(Crawler $node): bool
     {
         $has = false;
 
         try {
-            foreach ($snippets as $snippet) {
+            foreach ($this->snippets as $snippet) {
                 if ($snippet->code == $node->text()) {
                     $has = true;
                     break;
@@ -162,6 +164,37 @@ abstract class AbstractScraper implements ScraperInterface
         }
 
         return $has;
+    }
+
+    /**
+     * Has more snippets per page.
+     *
+     * @param  Symfony\Component\DomCrawler\Crawler  $crawler
+     * @param  array  $meta
+     * @return bool
+     */
+    protected function hasMoreSnippetsPerPage(Crawler $crawler, array $meta): bool
+    {
+        if (empty($meta['snippets_per_page'])) return false;
+
+        return $meta['snippets_per_page'] <= $this->countRetrievedSnippetsPerPage($crawler);
+    }
+
+    /**
+     * Count retrieved snippets per page.
+     *
+     * @param  Symfony\Component\DomCrawler\Crawler  $crawler
+     * @return int
+     */
+    protected function countRetrievedSnippetsPerPage(Crawler $crawler): int
+    {
+        $count = 0;
+
+        foreach ($this->snippets as $snippet) {
+            if ($crawler->getUri() === $snippet->meta['url']) $count++;
+        }
+
+        return $count;
     }
 
     /**
@@ -224,6 +257,7 @@ abstract class AbstractScraper implements ScraperInterface
      */
     protected function fetchWebsiteMetadata(Crawler $crawler): array
     {
+        $url        = new Uri($crawler->getUri());
         $title      = $crawler->filter('title')->text();
         $siteIcon   = $crawler->filter('link[rel="icon"]');
         $ogImage    = $crawler->filter('meta[property="og:image"]');
@@ -251,7 +285,7 @@ abstract class AbstractScraper implements ScraperInterface
         return [
             'name'  => $name,
             'brand' => $brand,
-            'url'   => (new Uri($crawler->getUri()))->getHost(),
+            'url'   => $url->getScheme() . '://' . $url->getHost(),
         ];
     }
 

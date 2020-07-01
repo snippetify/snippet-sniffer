@@ -124,7 +124,7 @@ final class SnippetSniffer
         $urls       = $this->provider()->fetch($query, $meta);
         
         foreach ($urls as $url) {
-            $snippets = array_merge($snippets, $this->scraper($url->getHost())->fetch($url));
+            $snippets = array_merge($snippets, $this->scraper($url->getHost())->fetch($url, $meta));
         }
 
         return $snippets;

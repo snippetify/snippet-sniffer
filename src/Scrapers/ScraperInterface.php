@@ -17,5 +17,5 @@ interface ScraperInterface
 {
     public function fetch(UriInterface $uri, array $options = []): array;
 
-    public function fetchFromDocument($document, array $options = []): array;
+    public function fetchFromDocument($document, array $options = [], ?UriInterface $uri = null): array;
 }

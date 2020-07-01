@@ -129,6 +129,14 @@ final class WebCrawler
     /**
      * @return  array
      */
+    public function getMeta(): array
+    {
+        return $this->meta;
+    }
+
+    /**
+     * @return  array
+     */
     public function getConfig(): array
     {
         return $this->config;

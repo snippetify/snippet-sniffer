@@ -183,6 +183,27 @@ class SnippetSnifferTest extends TestCase
         $this->assertGreaterThan(0, count($data));
     }
 
+    public function testSnippetsPerPage()
+    {
+        $perPage = 5;
+        $data    = $this->sniffer->fetch('js array contains', [ 'snippets_per_page' => $perPage, 'page' => 1, 'limit' => 10 ]);
+        $has     = true;
+        $pages   = [];
+
+        foreach ($data as $snippet) {
+            $pages[$snippet->meta['url']] = ($pages[$snippet->meta['url']] ?? 0) + 1;
+        }
+
+        foreach ($pages as $uri => $page) {
+            if ($page > $perPage) {
+                $has = false;
+                break;
+            }
+        }
+
+        $this->assertTrue($has);
+    }
+
     public function testAddScraper()
     {
         $data = $this->sniffer
