@@ -13,6 +13,7 @@ namespace Snippetify\SnippetSniffer\Scrapers;
 
 use Goutte\Client;
 use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
 use Snippetify\SnippetSniffer\Core;
 use Symfony\Component\DomCrawler\Crawler;
@@ -257,9 +258,10 @@ abstract class AbstractScraper implements ScraperInterface
      */
     protected function fetchWebsiteMetadata(Crawler $crawler): array
     {
-        $url        = new Uri($crawler->getUri());
+        $uri        = new Uri($crawler->getUri());
         $title      = $crawler->filter('title')->text();
         $siteIcon   = $crawler->filter('link[rel="icon"]');
+        $url        = $uri->getScheme() . '://' . $uri->getHost();
         $ogImage    = $crawler->filter('meta[property="og:image"]');
         $appleIcon  = $crawler->filter('link[rel="apple-touch-icon"]');
         $ogSiteName = $crawler->filter('meta[property="og:site_name"]');
@@ -282,10 +284,14 @@ abstract class AbstractScraper implements ScraperInterface
             $brand = '';
         }
         
+        if (!empty($brand) && !Uri::isAbsolute(new Uri($brand))) {
+            $brand = (string) UriResolver::resolve(new Uri($url), new Uri($brand));
+        }
+
         return [
             'name'  => $name,
             'brand' => $brand,
-            'url'   => $url->getScheme() . '://' . $url->getHost(),
+            'url'   => $url,
         ];
     }
 
